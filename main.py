@@ -1,5 +1,4 @@
 import argparse
-import neptune
 
 from trainer import Trainer
 from utils import init_logger, load_tokenizer, set_seed, MODEL_CLASSES, MODEL_PATH_MAP
@@ -9,11 +8,6 @@ from data_loader import load_and_cache_examples
 def main(args):
     init_logger()
     set_seed(args)
-
-    if args.logger:
-        neptune.init("wjdghks950/NumericHGN")
-        neptune.create_experiment(name="({}) NumHGN_{}_{}_{}".format(args.task, args.train_batch_size, args.max_seq_len, args.train_file))
-        neptune.append_tag("BertForSequenceClassification", "train", "num_augmented_HGN")
 
     tokenizer = load_tokenizer(args)
     train_dataset = dev_dataset = None
@@ -32,9 +26,6 @@ def main(args):
     if args.do_eval:
         trainer.load_model()
         trainer.evaluate("dev")
-
-    if args.logger:
-        neptune.stop()
 
 
 if __name__ == '__main__':

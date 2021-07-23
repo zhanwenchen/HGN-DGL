@@ -3,7 +3,6 @@ import torch.nn
 import os
 import logging
 from tqdm import tqdm, trange
-import neptune
 
 import numpy as np
 import torch
@@ -132,9 +131,8 @@ class ParaSelectorTrainer(object):
                     global_step += 1
 
                     if self.args.logger:
-                        # logger.info('Loss: %f', tr_loss / global_step)
-                        neptune.log_metric("Loss", tr_loss / global_step)
-                        neptune.log_metric("(Train) Accuracy", tr_acc / global_step)
+                        logger.info('Loss: %f', tr_loss / global_step)
+                        logger.info("(Train) Accuracy: %f", tr_acc / global_step)
 
                 # if self.args.logging_steps > 0 and (step + 1) % self.args.logging_steps == 0 and self.dev_dataset is not None:
                 #     self.evaluate("dev") # TODO: Problem: dev file save is saved with train data!!
@@ -213,11 +211,11 @@ class ParaSelectorTrainer(object):
         #     exit(0)
 
         if self.args.logger:
-            neptune.log_metric('(Val.) Loss', results['loss'])
-            neptune.log_metric('(Val.) Accuracy', results['acc'])
-            neptune.log_metric('(Val.) F1 Score', f1)
-            neptune.log_metric('(Val.) Precision', prec)
-            neptune.log_metric('(Val.) Recall', rec)
+            logger.info('(Val.) Loss: %f', results['loss'])
+            logger.info('(Val.) Accuracy: %f', results['acc'])
+            logger.info('(Val.) F1 Score: %f', f1)
+            logger.info('(Val.) Precision: %f', prec)
+            logger.info('(Val.) Recall: %f', rec)
 
         logger.info("***** Eval results *****")
         for key in sorted(results.keys()):

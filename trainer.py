@@ -1,7 +1,6 @@
 import os
 import logging
 from tqdm import tqdm, trange
-import neptune
 
 import numpy as np
 import torch
@@ -109,8 +108,7 @@ class Trainer(object):
                     global_step += 1
 
                     if self.args.logger:
-                        # logger.info('Loss: %f', tr_loss / global_step)
-                        neptune.log_metric('Loss', tr_loss / global_step)
+                        logger.info('Loss: %f', tr_loss / global_step)
                         # TODO: Ans F1, Sup F1, EM needed
 
                     # if self.args.logging_steps > 0 and global_step % self.args.logging_steps == 0 and self.dev_dataset is not None:
@@ -200,11 +198,11 @@ class Trainer(object):
         #     exit(0)
 
         if self.args.logger:
-            neptune.log_metric('(Val.) Loss', results['loss'])
-            neptune.log_metric('(Val.) Accuracy', results['acc'])
-            neptune.log_metric('(Val.) F1 Score', f1)
-            neptune.log_metric('(Val.) Precision', prec)
-            neptune.log_metric('(Val.) Recall', rec)
+            logger.info('(Val.) Loss: %f', results['loss'])
+            logger.info('(Val.) Accuracy: %f', results['acc'])
+            logger.info('(Val.) F1 Score: %f', f1)
+            logger.info('(Val.) Precision: %f', prec)
+            logger.info('(Val.) Recall: %f', rec)
 
         logger.info("***** Eval results *****")
         for key in sorted(results.keys()):
