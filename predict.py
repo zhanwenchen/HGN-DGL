@@ -20,7 +20,6 @@ class ParaPredictor(object):
         logger.info("***** Ranking paragraphs - Paragraph Selection *****")
 
     def title_matching(self, example):
-        doc_idx_list = []
         titles, docs = zip(*example.context)
         doc_idx_list = [doc_idx for doc_idx, title in enumerate(titles) if title.lower() in example.question.lower()]
         return doc_idx_list

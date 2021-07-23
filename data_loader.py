@@ -486,7 +486,7 @@ def convert_examples_to_features(args, examples, max_seq_len, tokenizer,
 
 
 def graph_constructor(args, node_indices, span_dict):
-    '''
+    """
     Args
     
     args : Model argument
@@ -497,7 +497,7 @@ def graph_constructor(args, node_indices, span_dict):
 
     node_idx : Dict[Dict[List]]: {Para_idx1: {sent_idx1: {ent_idx1, ent_idx2, ...}, sent_idx2: {...}}, Para_idx2: {...}}
 
-    '''
+    """
     q2ent, node_idx = node_indices
     # The edges should be bi-directional
     ps = ("paragraph", "ps", "sentence")

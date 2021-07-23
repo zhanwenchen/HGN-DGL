@@ -1,10 +1,8 @@
-import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
 from transformers import BertPreTrainedModel
-import dgl
 import dgl.nn.pytorch as dglnn
 
 from utils import MODEL_CLASSES
@@ -18,7 +16,7 @@ class GATLayer(nn.Module):
         self.reset_parameters()
 
     def reset_parameters(self):
-        ''' Reinitialize learnable parameters. '''
+        """ Reinitialize learnable parameters. """
         gain = nn.init.calculate_gain("relu")
         nn.init.xavier_normal_(self.fc.weight, gain=gain)
         nn.init.xavier_normal_(self.attn_fc.weight, gain=gain)
@@ -49,11 +47,11 @@ class GATLayer(nn.Module):
 
 class BiAttention(nn.Module):
 
-    '''
+    """
     bi-attention layer (Seo et al., 2017)
 
     Placed on top of pre-trained encoder (e.g., RoBERTa, BERT) to fuse information from both the query and the context
-    '''
+    """
 
     def __init__(self, args, hidden_size, dropout=0.1):
         super(BiAttention, self).__init__()
@@ -120,12 +118,12 @@ class GatedAttention(nn.Module):
         self.gate_linear = nn.Linear(self.config.hidden_size * 3, self.config.hidden_size * 4, bias=True)
     
     def forward(self, context_rep, graph_rep):
-        '''
+        """
         context_rep : M (in the HGN paper)
         graph_rep : H' (in the HGN paper)
         context_initial : C (in the HGN paper)
 
-        '''
+        """
         ctx_dot = F.relu(self.context_mlp(context_rep))
         graph_dot = F.relu(self.graph_mlp(graph_rep))
 
@@ -165,16 +163,16 @@ class NumericHGN(nn.Module):
 
         # https://docs.dgl.ai/api/python/nn.pytorch.html#dgl.nn.pytorch.HeteroGraphConv
         self.gat = dglnn.HeteroGraphConv({
-            "ps" : dglnn.GATConv(self.config.hidden_size, self.config.hidden_size, num_heads=1),
-            "sp" : dglnn.GATConv(self.config.hidden_size, self.config.hidden_size, num_heads=1),
-            "se" : dglnn.GATConv(self.config.hidden_size, self.config.hidden_size, num_heads=1),
-            "es" : dglnn.GATConv(self.config.hidden_size, self.config.hidden_size, num_heads=1),
-            "pp" : dglnn.GATConv(self.config.hidden_size, self.config.hidden_size, num_heads=1),
-            "ss" : dglnn.GATConv(self.config.hidden_size, self.config.hidden_size, num_heads=1),
-            "qp" : dglnn.GATConv(self.config.hidden_size, self.config.hidden_size, num_heads=1),
-            "pq" : dglnn.GATConv(self.config.hidden_size, self.config.hidden_size, num_heads=1),
-            "qe" : dglnn.GATConv(self.config.hidden_size, self.config.hidden_size, num_heads=1),
-            "eq" : dglnn.GATConv(self.config.hidden_size, self.config.hidden_size, num_heads=1),
+            "ps": dglnn.GATConv(self.config.hidden_size, self.config.hidden_size, num_heads=1),
+            "sp": dglnn.GATConv(self.config.hidden_size, self.config.hidden_size, num_heads=1),
+            "se": dglnn.GATConv(self.config.hidden_size, self.config.hidden_size, num_heads=1),
+            "es": dglnn.GATConv(self.config.hidden_size, self.config.hidden_size, num_heads=1),
+            "pp": dglnn.GATConv(self.config.hidden_size, self.config.hidden_size, num_heads=1),
+            "ss": dglnn.GATConv(self.config.hidden_size, self.config.hidden_size, num_heads=1),
+            "qp": dglnn.GATConv(self.config.hidden_size, self.config.hidden_size, num_heads=1),
+            "pq": dglnn.GATConv(self.config.hidden_size, self.config.hidden_size, num_heads=1),
+            "qe": dglnn.GATConv(self.config.hidden_size, self.config.hidden_size, num_heads=1),
+            "eq": dglnn.GATConv(self.config.hidden_size, self.config.hidden_size, num_heads=1),
             # TODO: Need (i) bi-directional edges and (ii) more edge types (e.g., question-paragraph, paragraph-paragraph, etc.)
         }, aggregate='sum')  # TODO: May need to change aggregate function (test it!) - ‘sum’, ‘max’, ‘min’, ‘mean’, ‘stack’.
 
@@ -187,7 +185,7 @@ class NumericHGN(nn.Module):
         self.answer_type_mlp = nn.Sequential(nn.Linear(self.config.hidden_size * 4, self.config.hidden_size), nn.Linear(self.config.hidden_size, 3))
 
     def forward(self, input_ids, attention_mask, token_type_ids, labels, graph_out, question_ends):
-        '''
+        """
         Args
 
         input_ids : [Question ; Context] tokenized by tokenizer (e.g., BertTokenizer)
@@ -198,9 +196,8 @@ class NumericHGN(nn.Module):
         g : dgl.graph - the hierarchical graph neural network
         question_ends : question end index (e.g., first occurrence of [SEP] token in [Q;C] input)
 
-        '''
+        """
         para_lbl, sent_lbl, answer_type_lbl, span_idx = labels
-        g, node_idx, span_dict = graph_out
 
         encoder_out = self.encoder(input_ids, attention_mask, token_type_ids)
         seq_out = encoder_out[0]
@@ -314,7 +311,6 @@ class NumericHGN(nn.Module):
 
         losses = {}
 
-        loss_start = loss_end = loss_type = loss_para = loss_sent = loss_ent = 0.0
         # sometimes the start/end positions are outside our model inputs, we ignore these terms
         loss_fct = nn.CrossEntropyLoss()
         loss_start = loss_fct(start_logits, start_pos)

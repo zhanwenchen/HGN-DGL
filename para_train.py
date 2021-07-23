@@ -6,10 +6,12 @@ from utils import init_logger, load_tokenizer, set_seed, MODEL_CLASSES, MODEL_PA
 from data_loader import load_and_cache_examples
 
 
-'''
+"""
 Finetune BERT-based (or RoBERTa-based) Paragraph Selection model.
 
-'''
+"""
+
+
 def main(args):
     init_logger()
     set_seed(args)

@@ -1,6 +1,5 @@
 import random
 import logging
-import os
 
 import torch
 import numpy as np
@@ -9,9 +8,7 @@ from collections import Counter
 from transformers import (
     BertConfig,
     BertModel,
-    ElectraConfig,
     BertTokenizer,
-    ElectraTokenizer,
     RobertaConfig,
     RobertaModel,
     RobertaTokenizer,
