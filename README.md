@@ -15,6 +15,11 @@ I have implemented it with the [Deep Graph Library (DGL)](https://www.dgl.ai/), 
 
 ## Usage
 
+Download hotpot dataset
+```bas
+$ ./download_hotpot.sh
+h```
+``````
 Training the paragraph selector (fine-tune the paragraph selector for paragraph retrieval):
 ```bash
 $ ./para_finetune.sh
