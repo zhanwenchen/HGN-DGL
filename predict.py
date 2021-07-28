@@ -28,6 +28,7 @@ class ParaPredictor(object):
         # Check whether model exists
         if not os.path.exists(self.args.model_dir):
             raise Exception("Model doesn't exists! Train first!")
+            pass
         try:
             model = ParagraphSelector.from_pretrained(self.args.model_dir)
             model.to(self.device)

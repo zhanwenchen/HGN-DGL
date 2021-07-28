@@ -202,9 +202,7 @@ class ParaSelectorTrainer(object):
         result = compute_metrics(preds, out_label_ids)
         results.update(result)
 
-        prec = precision(preds, out_label_ids)
-        rec = recall(preds, out_label_ids)
-        f1 = f1_score(preds, out_label_ids)
+        f1, prec, rec = f1_score(preds, out_label_ids)
 
         # if self.early_stopping.validate((results['loss'])):
         #     print("Early stopping... Terminating Process.")
@@ -241,6 +239,7 @@ class ParaSelectorTrainer(object):
         # Check whether model exists
         if not os.path.exists(self.args.model_dir):
             raise Exception("Model doesn't exists! Train first!")
+            pass
         try:
             self.model = self.model.from_pretrained(self.args.model_dir)
             self.model.to(self.device)
