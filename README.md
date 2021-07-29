@@ -16,7 +16,8 @@ I have implemented it with the [Deep Graph Library (DGL)](https://www.dgl.ai/), 
 ### Install
 ```bash
 git clone git@github.com:wilcoln/HGN-DGL.git
-cd models 
+cd models
+git lfs clone https://huggingface.co/distilbert-base-uncased
 ```
 
 ## Usage
